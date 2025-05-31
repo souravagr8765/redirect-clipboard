@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Connecting...</title>
+  <script>
+    const local = "https://clipboard.srvagr-local.duckdns.org";    // replace with your local IP
+    const tailscale = "https://clipboard.srvagr.duckdns.org";    // replace with your Tailscale IP
+
+    async function checkAndRedirect() {
+      try {
+        const res = await fetch(local + "/health", { mode: "no-cors" });
+        window.location.href = local;
+      } catch (e) {
+        window.location.href = tailscale;
+      }
+    }
+
+    checkAndRedirect();
+  </script>
+</head>
+<body>
+  <p>Checking connection...</p>
+</body>
+</html>
