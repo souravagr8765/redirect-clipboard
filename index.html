@@ -1,39 +1,36 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8" />
-  <title>Redirecting...</title>
-  <script>
-    const local = "https:clipboard.srvagr-local.duckdns.org";
-    const tailscale = "https:clipboard.srvagr.duckdns.org";
+  <head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <script>
+      const local = "https:clipboard.srvagr-local.duckdns.org";
+      const tailscale = "https:clipboard.srvagr.duckdns.org";
 
-    function tryUrl(url, fallback) {
-      const img = new Image();
-      let redirected = false;
 
-      img.onload = function () {
-        if (!redirected) {
-          redirected = true;
-          window.location.replace(url);
-        }
+      function check(url, callback) {
+        const img = new Image();
+        img.onload = () => callback(true);
+        img.onerror = () => callback(false);
+        img.src = url + "/favicon.ico?" + Date.now();
+      }
+
+      function redirectTo(target) {
+        const a = document.createElement('a');
+        a.href = target;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click(); // triggers in-app navigation
+      }
+
+      window.onload = () => {
+        check(local, (isUp) => {
+          redirectTo(isUp ? local : tailscale);
+        });
       };
-
-      img.onerror = function () {
-        if (!redirected) {
-          redirected = true;
-          window.location.replace(fallback);
-        }
-      };
-
-      img.src = url + "/favicon.ico?" + new Date().getTime();
-    }
-
-    window.onload = function () {
-      tryUrl(local, tailscale);
-    };
-  </script>
-</head>
-<body>
-  <p>Checking connection, please wait...</p>
-</body>
+    </script>
+  </head>
+  <body>
+    <p>Checking connection...</p>
+  </body>
 </html>
