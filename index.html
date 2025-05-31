@@ -1,36 +1,34 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <title>Redirecting...</title>
+    <meta charset="UTF-8" />
+    <title>Manual Redirect</title>
+    <style>
+      body { font-family: sans-serif; padding: 2em; }
+      a { font-size: 1.5em; display: block; margin-bottom: 1em; }
+    </style>
+  </head>
+  <body>
+    <a id="go" href="#">Connecting...</a>
+
     <script>
       const local = "https:clipboard.srvagr-local.duckdns.org";
       const tailscale = "https:clipboard.srvagr.duckdns.org";
 
-
-      function check(url, callback) {
+      function test(url, cb) {
         const img = new Image();
-        img.onload = () => callback(true);
-        img.onerror = () => callback(false);
+        img.onload = () => cb(true);
+        img.onerror = () => cb(false);
         img.src = url + "/favicon.ico?" + Date.now();
       }
 
-      function redirectTo(target) {
-        const a = document.createElement('a');
-        a.href = target;
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click(); // triggers in-app navigation
-      }
-
-      window.onload = () => {
-        check(local, (isUp) => {
-          redirectTo(isUp ? local : tailscale);
-        });
-      };
+      test(local, function (up) {
+        const go = document.getElementById('go');
+        const target = up ? local : tailscale;
+        go.textContent = "Go to Service →";
+        go.href = target;
+        go.click(); // Simulates Homepage behavior
+      });
     </script>
-  </head>
-  <body>
-    <p>Checking connection...</p>
   </body>
 </html>
