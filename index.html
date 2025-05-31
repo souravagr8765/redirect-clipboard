@@ -1,25 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Connecting...</title>
+  <meta charset="UTF-8" />
+  <title>Redirecting...</title>
   <script>
-    const local = "https://clipboard.srvagr-local.duckdns.org";    // replace with your local IP
-    const tailscale = "https://clipboard.srvagr.duckdns.org";    // replace with your Tailscale IP
+    const local = "https:clipboard.srvagr-local.duckdns.org";
+    const tailscale = "https:clipboard.srvagr.duckdns.org";
 
-    async function checkAndRedirect() {
-      try {
-        const res = await fetch(local + "/health", { mode: "no-cors" });
-        window.location.href = local;
-      } catch (e) {
-        window.location.href = tailscale;
-      }
+    function tryUrl(url, fallback) {
+      const img = new Image();
+      let redirected = false;
+
+      img.onload = function () {
+        if (!redirected) {
+          redirected = true;
+          window.location.replace(url);
+        }
+      };
+
+      img.onerror = function () {
+        if (!redirected) {
+          redirected = true;
+          window.location.replace(fallback);
+        }
+      };
+
+      img.src = url + "/favicon.ico?" + new Date().getTime();
     }
 
-    checkAndRedirect();
+    window.onload = function () {
+      tryUrl(local, tailscale);
+    };
   </script>
 </head>
 <body>
-  <p>Checking connection...</p>
+  <p>Checking connection, please wait...</p>
 </body>
 </html>
