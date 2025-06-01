@@ -1,46 +1,25 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Redirect</title>
-    <style>
-      body {
-        font-family: sans-serif;
-        padding: 2em;
-        text-align: center;
-      }
-      a {
-        font-size: 1.5em;
-        text-decoration: none;
-        background: #008cff;
-        color: white;
-        padding: 1em 2em;
-        border-radius: 10px;
-        display: inline-block;
-      }
-    </style>
-  </head>
-  <body>
-    <p>Tap the button to go to your service:</p>
-    <a id="link" href="#" target="_self">Loading...</a>
+<head>
+  <meta charset="UTF-8">
+  <title>Connecting...</title>
+  <script>
+    const local = "https://clipboard.srvagr-local.duckdns.org";    // replace with your local IP
+    const tailscale = "https://clipboard.srvagr.duckdns.org";    // replace with your Tailscale IP
 
-    <script>
-      const local = "https://clipboard.srvagr-local.duckdns.org";
-      const tailscale = "https://clipboard.srvagr.duckdns.org";
-
-      function check(url, cb) {
-        const img = new Image();
-        img.onload = () => cb(true);
-        img.onerror = () => cb(false);
-        img.src = url + "/favicon.ico?" + Date.now();
+    async function checkAndRedirect() {
+      try {
+        const res = await fetch(local + "/health", { mode: "no-cors" });
+        window.location.href = local;
+      } catch (e) {
+        window.location.href = tailscale;
       }
+    }
 
-      check(local, (isUp) => {
-        const target = isUp ? local : tailscale;
-        const link = document.getElementById("link");
-        link.href = target;
-        link.textContent = "Go to Service";
-      });
-    </script>
-  </body>
+    checkAndRedirect();
+  </script>
+</head>
+<body>
+  <p>Checking connection...</p>
+</body>
 </html>
